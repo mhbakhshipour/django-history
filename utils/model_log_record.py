@@ -3,7 +3,7 @@ from datetime import datetime
 from django.contrib.auth.models import User
 
 from utils.model_to_dict import model_to_dict
-from core.middleware import current_request
+from utils.current_request_middleware import current_request
 
 
 class LogRecord:
