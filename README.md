@@ -12,7 +12,7 @@ When working with models, it can be useful to keep track of changes in the model
 ## Installation
 
 ```
-git clone mh.bakhshipour/django-history
+clone the project
 ```
 
 ## Usage
