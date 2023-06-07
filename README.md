@@ -19,17 +19,24 @@ clone the project
 
 To use the WithLogModel utility, follow these steps:
 
-1. Import the WithLogModel class into your project:
+1. Add the RequestMiddleware to end of the MIDDLEWARE section of settings.py:
+```
+MIDDLEWARE = [
+    ...
+    'utils.RequestMiddleware',
+]
+```
+2. Import the WithLogModel class into your project:
 ```
 from utils.with_log_model import WithLogModel
 ```
-2. Inherit the WithLogModel class in your model class:
+3. Inherit the WithLogModel class in your model class:
 ```
 class MyModel(WithLogModel):
     pass
 
 ```
-3. Access the histories field to view the log of changes:
+4. Access the histories field to view the log of changes:
 ```
 model_instance.histories -> value:
 [
