@@ -35,6 +35,10 @@ def m2m_signal_handler(sender, **kwargs):
     instance = kwargs['instance']
     action = kwargs['action']
     pk_set = kwargs['pk_set']
+    model_fields = list(map(lambda x: x.name, instance._meta.fields))
+
+    if not "histories" in model_fields:
+        return
 
     if action in ("pre_remove", "pre_add", "pre_clear"):
         m2m_fields = [field.name for field in instance._meta.many_to_many]
@@ -97,6 +101,3 @@ def preper_pre_clear_history(instance, m2m_field: str, pk_set: dict = {}) -> Tup
     post_change = []
 
     return pre_change, post_change
-
-
-m2m_changed.connect(m2m_signal_handler)
