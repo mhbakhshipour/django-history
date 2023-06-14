@@ -22,22 +22,22 @@ class LogRecord:
         return cls._instance
 
     def generate_log(self) -> list:
-        old_data = self.__preper_old_data()
+        old_data = self.__prepare_old_data()
         old_histories = self.instance.histories or []
 
         if not old_data:
             return old_histories
 
-        new_data = self.__preper_new_data(old_data)
+        new_data = self.__prepare_new_data(old_data)
 
-        request_user = self.preper_request_user()
+        request_user = self.prepare_request_user()
 
-        result = self.preper_result(
+        result = self.prepare_result(
             old_data, new_data, old_histories, request_user)
 
         return result
 
-    def __preper_old_data(self) -> dict or None:
+    def __prepare_old_data(self) -> dict or None:
         changed_fields_with_old_value = self.__get_changed_fields_with_old_value()
         if not changed_fields_with_old_value:
             return None
@@ -70,7 +70,7 @@ class LogRecord:
 
         return changed_fields
 
-    def __preper_new_data(self, old_data: dict) -> dict:
+    def __prepare_new_data(self, old_data: dict) -> dict:
         instance = self.instance
         new_data = self.__get_new_data_from_model(instance, old_data)
 
@@ -82,12 +82,12 @@ class LogRecord:
 
         return new_data
 
-    def preper_request_user(self) -> User or None:
+    def prepare_request_user(self) -> User or None:
         user = current_request().user if current_request() else None
 
         return user
 
-    def preper_result(self, old_data: dict, new_data: dict, old_histories: list, request_user: User or None) -> list:
+    def prepare_result(self, old_data: dict, new_data: dict, old_histories: list, request_user: User or None) -> list:
         old_histories.append(
             {
                 "change_date": str(datetime.now()),
