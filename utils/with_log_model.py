@@ -47,13 +47,13 @@ def m2m_signal_handler(sender, **kwargs):
         for m2m_field in m2m_fields:
             if getattr(instance, m2m_field).source_field.model is sender:
                 if action == "pre_remove":
-                    pre_change, post_change = preper_pre_remove_history(
+                    pre_change, post_change = prepare_pre_remove_history(
                         instance, m2m_field, pk_set)
                 elif action == "pre_add":
-                    pre_change, post_change = preper_pre_add_history(
+                    pre_change, post_change = prepare_pre_add_history(
                         instance, m2m_field, pk_set)
                 elif action == "pre_clear":
-                    pre_change, post_change = preper_pre_clear_history(
+                    pre_change, post_change = prepare_pre_clear_history(
                         instance, m2m_field, pk_set)
                 else:
                     pre_change, post_change = [], []
@@ -62,16 +62,16 @@ def m2m_signal_handler(sender, **kwargs):
                 next_data = {m2m_field: post_change}
 
                 log_record = LogRecord(instance)
-                request_user = log_record.preper_request_user()
+                request_user = log_record.prepare_request_user()
 
-                new_history = log_record.preper_result(
+                new_history = log_record.prepare_result(
                     pr_data, next_data, old_histories, request_user)
 
         instance.__class__.objects.filter(
             pk=instance.id).update(histories=new_history)
 
 
-def preper_pre_remove_history(instance, m2m_field: str, pk_set: dict = {}) -> Tuple[list, list]:
+def prepare_pre_remove_history(instance, m2m_field: str, pk_set: dict = {}) -> Tuple[list, list]:
     pre_change = [o.__str__() for o in getattr(instance, m2m_field).all()]
     post_change = [o.__str__() for o in getattr(
         instance, m2m_field).exclude(pk__in=pk_set)]
@@ -81,7 +81,7 @@ def preper_pre_remove_history(instance, m2m_field: str, pk_set: dict = {}) -> Tu
     return pre_change, post_change
 
 
-def preper_pre_add_history(instance, m2m_field: str, pk_set: dict = {}) -> Tuple[list, list]:
+def prepare_pre_add_history(instance, m2m_field: str, pk_set: dict = {}) -> Tuple[list, list]:
     pre_change = [o.__str__() for o in getattr(instance, m2m_field).all()]
 
     global PRE_CHANGE_FOR_PRE_REMOVE_ACTION
@@ -96,7 +96,7 @@ def preper_pre_add_history(instance, m2m_field: str, pk_set: dict = {}) -> Tuple
     return pre_change, post_change
 
 
-def preper_pre_clear_history(instance, m2m_field: str, pk_set: dict = {}) -> Tuple[list, list]:
+def prepare_pre_clear_history(instance, m2m_field: str, pk_set: dict = {}) -> Tuple[list, list]:
     pre_change = [o.__str__() for o in getattr(instance, m2m_field).all()]
     post_change = []
 
