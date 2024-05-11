@@ -1,7 +1,8 @@
-from typing import Any
+from typing import Any, Union
 
 from itertools import chain
 from django.db.models.fields.related import ForeignKey, ManyToManyField
+from django.db.models.fields import DateField, DateTimeField
 
 
 def model_to_dict(
@@ -11,7 +12,7 @@ def model_to_dict(
     get_m2m_data_separated: bool = False,
     get_data_with_str: bool = False,
     depth: int = 0,
-) -> tuple[dict, dict] | dict:
+) -> Union[tuple[dict, dict], dict]:
     opts = instance._meta
     concrete_fields = opts.concrete_fields
     private_fields = opts.private_fields
@@ -34,7 +35,11 @@ def model_to_dict(
 
         field_value = f.value_from_object(instance)
 
-        if isinstance(f, ForeignKey):
+        if isinstance(f, (DateField, DateTimeField)):
+            if get_data_with_str:
+                data[f.name] = str(getattr(instance, f.name))
+
+        elif isinstance(f, ForeignKey):
             if get_data_with_str:
                 data[f.name] = str(getattr(instance, f.name))
             else:
