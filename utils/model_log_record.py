@@ -60,7 +60,11 @@ class LogRecord:
             new_value = getattr(instance, field.name)
 
             if old_value != new_value:
-                changed_fields_with_old_value[field.name] = old_value.__str__()
+                changed_fields_with_old_value[field.name] = (
+                    old_value
+                    if type(old_value) in [list, dict, int, bool, float, type(None)]
+                    else old_value.__str__()
+                )
         return changed_fields_with_old_value
 
     def __remove_history_field(self, changed_fields: dict) -> dict:
